@@ -1,0 +1,28 @@
+#Autore: Andrea Iuliano
+#Versione: 2.0
+
+lab_generator è uno script realizzato per automatizzare la generazione dei lab su netkit.
+Per utilizzarlo è sufficiente generare un file denominato "configuration_lab.conf" la cui descrizione è simile al lab.conf. 
+clean.sh serve a rimuovere tutti i file creati da lab_generator.
+
+COME SCRIVERE configuration_lab.conf:
+-Ogni gruppo di macchine descritte rappresenta una lan
+-Ogni gruppo deve essere separato da una riga vuota
+-Ogni gruppo deve iniziare con la riga ip numIp/Barra, la quale rappresenta la netmask relativa alla lan (es: ip 192.168.0.0/24). 
+-Se si vuole inserire rotte statiche occorre inserire la riga "default num" subito dopo la riga relativa alla netmask precedentemente descritta. Il valore "num" identifica la parte finale dell'ip associato alla macchina. Se una lan ha come netmask 192.168.0.0 ed la macchina ha come ip 192.168.0.1 è sufficiente scrivere "default 1"
+-Se una lan fa uso di rip è sufficiente scrivere "rip". Viene automaticamente attivato zebra, creato "daemons" e creato "ripd.conf" completo (se è un as viene anche inserita la riga "redistribute bgp")
+-Dopo aver inserito queste righe è possibile specificare le macchine secondo la seguente sintassi: "nome[dev]=num", dove "nome" identifica il nome associato alla macchina, "dev" il numero di eth e "num" la parte terminante dell'ip (secondo lo stesso principio della riga default). Per ogni macchina vengono create sia le cartelle che gli startup (già descritti), insieme al file lab.conf (anch'esso descritto).
+-I nomi seguono le seguenti convenzioni:
+	-i router iniziano con "r"
+	-gli as iniziano con "as"
+	-i dns iniziano con "ns" oppure "dns"
+	-i web service iniziano con ws
+	-i pc con "pc"
+-Se si vuole creare un dns è sufficiente apporre la dicitura "nome[dev]=num zona". Lo script attiverà bind per la macchina e generarà i file "named.conf" (completo), "db.root" (completo){se zona!=root) e "db.zona". A quest'ultimo file vanno aggiunte le zone sotto la sua proprietà (es: alla zona "root" VANNO AGGIUNTE le informazioni relative a "com", "it", "net",... a seconda delle esigenze).
+-Ai ws viene attivato apache2 e viene inserito il file "index.html" sotto la directory "/var/www/". Il file è contraddistintivo per ogni ws.
+-Un pc può essere dichiarato sia "nome[dev]=num" sia "nome[dev]=num resolver resolv" dove resolv può assumere come valore o un ip (relativo al resolver) oppure il suo stesso nome (pc1[0]=2 resolver pc1). Solo in quest'ultimo caso verrà attivato bind sulla macchina e verranno inseriti "db.root" e "db.zona". Viene inoltre creato il file resolv.conf dove viene inserito "ip" nel primo caso e "127.0.0.1" nel secondo.
+-Sugli as viene automaticamente attivato bgp (e zebra) {rip solo se specificato come antecedentemente descritto}, creando una bozza del file "bgpd.conf". La configurazione di quest'ultima NON VIENE GENERATA, dovranno infatti essere inseriti gli ip dei vicini, le reti da dichiarare ed eventuali route-map o prefix-list.
+
+
+All'interno del file zip è allegato un esempio di "configuration_lab.conf" relativa ad una rete.
+

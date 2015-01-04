@@ -10,11 +10,8 @@ The project contain a detailed instructions in italian located in "istruzioni pe
 
 The script creates a simulated network by reading the contens of "configuration_lab.conf", described by a precise syntax. The project contain a sample file.
 
-One written the configuration file, start "lab_generator.sh" and netkit later.
 
-To changes the lab description just clean the netkit's files through "clean.sh", edit the configuration file and repeat the procedure.
-
-The script does NOT have any form of intelligence, therefore it only create one sketch of the file "bgpd.conf", wich requires modification.
+The script does not have any form of intelligence, therefore it only create one sketch of the file "bgpd.conf", wich requires modification.
 
 
 
